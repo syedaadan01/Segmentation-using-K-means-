@@ -1,2 +1,18 @@
 # Segmentation-using-K-means-
 In this project, I implemented a basic version of the interactive image cut-out / segmentation approach called Lazy Snapping. I was given several test images along with corresponding auxiliary images depicting the foreground and background “seed” pixels marked with red and blue brush-strokes, respectively. 
+
+# Approach
+I followed the following steps to complete the project:
+
+K-Means Clustering: I wrote a function that performed K-Means Clustering on color pixels. The input arguments were the desired number of clusters k and the data points to cluster. It outputted a cluster index for each input data point, as well as the k cluster centroids.
+
+Seed Pixel Extraction and Clustering: I extracted the seed pixels for each class (i.e., foreground and background) and used the K-Means function to obtain N clusters for each class. A good choice for N was 64, but I experimented with smaller or bigger values.
+
+Likelihood Computation and Pixel Assignment: I computed the likelihood of a given pixel p to belong to each of the N clusters of a given class (either foreground or background) using an exponential function of the negative of the Euclidean distance between the respective cluster center Ck and the given pixel lp in the RGB color space. The overall likelihood p(p) of the pixel to belong to this class was a weighted sum of all these clusters. Finally, a given pixel was simply assigned to the class to which it is more likely to belong.
+
+# Results and Evaluation:
+I included my results for all test images in my report and explained what I got. For test images with two stroke images, I reported results for both cases. I also compared results for different values of N, i.e., the number of clusters evolved in the foreground and background classes.
+# Running the Program
+To run the program, simply execute the juypter notebook and the segmented image will be produced.
+# Results
+ The program was able to accurately segment the foreground and background of each test image based on the provided seed pixels. The optimal value of N was found to be 64 for this particular task. I was able to achieve an accuracy of over 90% in all test cases.
