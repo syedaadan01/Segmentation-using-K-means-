@@ -1,3 +1,56 @@
+#code import numpy as np
+from PIL import Image
+from sklearn.cluster import KMeans
+
+def k_means_clustering(k, data):
+    kmeans = KMeans(n_clusters=k, random_state=0).fit(data)
+    return kmeans.labels_, kmeans.cluster_centers_
+
+img = Image.open("lady.png")
+stroke_mask = Image.open("lady stroke 2.png").convert("RGB")
+
+wid, hgt = img.size
+
+img_np = np.array(img)
+stroke_mask_np = np.array(stroke_mask)
+
+# Extracting seeds from stroke mask
+fg_mask = (stroke_mask_np == [255, 0, 0]).all(axis=2)
+bg_mask = (stroke_mask_np == [6, 0, 255]).all(axis=2)
+
+fg_points = img_np[fg_mask]
+bg_points = img_np[bg_mask]
+
+# Clustering
+N = 74
+fg_lbl, fg_ctr = k_means_clustering(N, fg_points)
+bg_lbl, bg_ctr = k_means_clustering(N, bg_points)
+
+# Likelihood
+wk = 0.1
+p_fg = np.zeros((hgt, wid))
+p_bg = np.zeros((hgt, wid))
+
+for j in range(hgt):
+    for i in range(wid):
+
+        pxl = img_np[j, i]
+        p_fg[j, i] = np.sum([wk * np.exp(-np.linalg.norm(pxl - fg_ctr[k])) for k in range(N)])
+        p_bg[j, i] = np.sum([wk * np.exp(-np.linalg.norm(pxl - bg_ctr[k])) for k in range(N)])
+
+# Assign segmentation based on Likelihood
+segmt = np.zeros((hgt, wid, 3), dtype=np.uint8)
+
+for j in range(hgt):
+    for i in range(wid):
+        if p_fg[j, i] > p_bg[j, i]: 
+            segmt[j, i] = img_np[j, i]
+        else:
+            segmt[j, i] = [255, 255, 255]
+
+
+segmt_img = Image.fromarray(segmt)
+segmt_img.save("segmentation_lady_stroke2.png")
 # Segmentation-using-K-means-
 In this project, I implemented a basic version of the interactive image cut-out / segmentation approach called Lazy Snapping. I was given several test images along with corresponding auxiliary images depicting the foreground and background “seed” pixels marked with red and blue brush-strokes, respectively. 
 
