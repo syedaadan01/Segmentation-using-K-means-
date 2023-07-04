@@ -9,7 +9,18 @@ K-Means Clustering: I wrote a function that performed K-Means Clustering on colo
 Seed Pixel Extraction and Clustering: I extracted the seed pixels for each class (i.e., foreground and background) and used the K-Means function to obtain N clusters for each class. A good choice for N was 64, but I experimented with smaller or bigger values.
 
 Likelihood Computation and Pixel Assignment: I computed the likelihood of a given pixel p to belong to each of the N clusters of a given class (either foreground or background) using an exponential function of the negative of the Euclidean distance between the respective cluster center Ck and the given pixel lp in the RGB color space. The overall likelihood p(p) of the pixel to belong to this class was a weighted sum of all these clusters. Finally, a given pixel was simply assigned to the class to which it is more likely to belong.
+# expalaination : Here's a brief explanation of the code and its requirements:
 
+The code reads an image and a stroke mask using the PIL library.
+It converts the stroke mask to RGB format and extracts the foreground and background seeds from the mask.
+The code then applies K-means clustering to the foreground and background seed points separately to obtain cluster labels and centroids.
+Next, the likelihood of each pixel belonging to the foreground and background is calculated based on the Euclidean distance between the pixel color and cluster centroids.
+Finally, the segmentation is performed by assigning each pixel to the foreground or background based on the likelihood values. The resulting segmented image is saved.
+# Requirements:
+
+The code requires the PIL (Python Imaging Library) and scikit-learn libraries to be installed.
+It assumes that the input image "lady.png" and the stroke mask "lady stroke 2.png" are present in the same directory as the code file.
+The code utilizes the KMeans class from scikit-learn for clustering.
 # Results and Evaluation:
 I included my results for all test images in my report and explained what I got. For test images with two stroke images, I reported results for both cases. I also compared results for different values of N, i.e., the number of clusters evolved in the foreground and background classes.
 # Running the Program
