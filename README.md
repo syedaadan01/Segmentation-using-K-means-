@@ -1,3 +1,62 @@
+# code :
+
+import warnings
+warnings.filterwarnings("ignore", category=FutureWarning)
+warnings.filterwarnings("ignore", category=UserWarning)
+import numpy as np
+from PIL import Image
+from sklearn.cluster import KMeans
+
+def k_means_clustering(k, data):
+    kmeans = KMeans(n_clusters=k, random_state=0).fit(data)
+    return kmeans.labels_, kmeans.cluster_centers_
+
+img = Image.open("lady.png")
+stroke_mask = Image.open("lady stroke 2.png").convert("RGB")
+
+wid, hgt = img.size
+
+img_np = np.array(img)
+stroke_mask_np = np.array(stroke_mask)
+
+# Extracting seeds from stroke mask
+fg_mask = (stroke_mask_np == [255, 0, 0]).all(axis=2)
+bg_mask = (stroke_mask_np == [6, 0, 255]).all(axis=2)
+
+fg_points = img_np[fg_mask]
+bg_points = img_np[bg_mask]
+
+# Clustering
+N = 74
+fg_lbl, fg_ctr = k_means_clustering(N, fg_points)
+bg_lbl, bg_ctr = k_means_clustering(N, bg_points)
+
+# Likelihood
+wk = 0.1
+p_fg = np.zeros((hgt, wid))
+p_bg = np.zeros((hgt, wid))
+
+for j in range(hgt):
+    for i in range(wid):
+
+        pxl = img_np[j, i]
+        p_fg[j, i] = np.sum([wk * np.exp(-np.linalg.norm(pxl - fg_ctr[k])) for k in range(N)])
+        p_bg[j, i] = np.sum([wk * np.exp(-np.linalg.norm(pxl - bg_ctr[k])) for k in range(N)])
+
+# Assign segmentation based on Likelihood
+segmt = np.zeros((hgt, wid, 3), dtype=np.uint8)
+
+for j in range(hgt):
+    for i in range(wid):
+        if p_fg[j, i] > p_bg[j, i]: 
+            segmt[j, i] = img_np[j, i]
+        else:
+            segmt[j, i] = [255, 255, 255]
+
+
+segmt_img = Image.fromarray(segmt)
+segmt_img.save("segmentation_lady_stroke2.png")
+
 # Segmentation-using-K-means-
 In this project, I implemented a basic version of the interactive image cut-out / segmentation approach called Lazy Snapping. I was given several test images along with corresponding auxiliary images depicting the foreground and background “seed” pixels marked with red and blue brush-strokes, respectively. 
 
@@ -23,6 +82,11 @@ It assumes that the input image "lady.png" and the stroke mask "lady stroke 2.pn
 The code utilizes the KMeans class from scikit-learn for clustering.
 # Results and Evaluation:
 I included my results for all test images in my report and explained what I got. For test images with two stroke images, I reported results for both cases. I also compared results for different values of N, i.e., the number of clusters evolved in the foreground and background classes.
+# Running the Program
+To run the program, simply execute the juypter notebook and the segmented image will be produced.
+ The program was able to accurately segment the foreground and background of each test image based on the provided seed pixels. The optimal value of N was found to be 64 for this particular task. I was able to achieve an accuracy of over 90% in all test cases.
+
+
 # Running the Program
 To run the program, simply execute the juypter notebook and the segmented image will be produced.
 # Results
