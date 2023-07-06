@@ -84,10 +84,5 @@ The code utilizes the KMeans class from scikit-learn for clustering.
 I included my results for all test images in my report and explained what I got. For test images with two stroke images, I reported results for both cases. I also compared results for different values of N, i.e., the number of clusters evolved in the foreground and background classes.
 # Running the Program
 To run the program, simply execute the juypter notebook and the segmented image will be produced.
- The program was able to accurately segment the foreground and background of each test image based on the provided seed pixels. The optimal value of N was found to be 64 for this particular task. I was able to achieve an accuracy of over 90% in all test cases.
+ The program was able to accurately segment the foreground and background of each test image based on the provided seed pixels. The optimal value of N was found to be 64 for this particular task. 
 
-
-# Running the Program
-To run the program, simply execute the juypter notebook and the segmented image will be produced.
-# Results
- The program was able to accurately segment the foreground and background of each test image based on the provided seed pixels. The optimal value of N was found to be 64 for this particular task. I was able to achieve an accuracy of over 90% in all test cases.
